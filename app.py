@@ -28,6 +28,54 @@ zoom_map = {
     "2 px":2
 }
 
+def append_images(images, direction='horizontal',
+                  bg_color=(255,255,255), aligment='center'):
+    """
+    Appends images in horizontal/vertical direction.
+
+    Args:
+        images: List of PIL images
+        direction: direction of concatenation, 'horizontal' or 'vertical'
+        bg_color: Background color (default: white)
+        aligment: alignment mode if images need padding;
+           'left', 'right', 'top', 'bottom', or 'center'
+
+    Returns:
+        Concatenated image as a new PIL image object.
+    """
+    widths, heights = zip(*(i.size for i in images))
+
+    if direction=='horizontal':
+        new_width = sum(widths)
+        new_height = max(heights)
+    else:
+        new_width = max(widths)
+        new_height = sum(heights)
+
+    new_im = Image.new('RGB', (new_width, new_height), color=bg_color)
+
+
+    offset = 0
+    for im in images:
+        if direction=='horizontal':
+            y = 0
+            if aligment == 'center':
+                y = int((new_height - im.size[1])/2)
+            elif aligment == 'bottom':
+                y = new_height - im.size[1]
+            new_im.paste(im, (offset, y))
+            offset += im.size[0]
+        else:
+            x = 0
+            if aligment == 'center':
+                x = int((new_width - im.size[0])/2)
+            elif aligment == 'right':
+                x = new_width - im.size[0]
+            new_im.paste(im, (x, offset))
+            offset += im.size[1]
+
+    return new_im
+
 def postcard_creator(filenames:list,fonts:list):
     """
     Postcard front page creator
@@ -43,7 +91,7 @@ def postcard_creator(filenames:list,fonts:list):
     image_name = st.sidebar.selectbox(
         label = "Select your image",
         options = filenames,
-        index = 4
+        index = 13
     )
     image = Image.open(f'Draws/{image_name}.jpg')
     im = image.resize(DRAW_TUPLE)
@@ -145,7 +193,7 @@ def postcard_creator(filenames:list,fonts:list):
         layout = layout_solar
     
     st.image(layout)
-    return
+    return layout
 
 def back_page_selector(backpages:list):
     """
@@ -169,7 +217,25 @@ def back_page_selector(backpages:list):
     backpage = backpage_img.resize(LAYOUT_TUPLE)
 
     st.image(backpage)
-    return
+    return backpage
+
+def create_final_layout(frontpage,backpage):
+
+    front = [frontpage,frontpage]
+    back = [backpage,backpage]
+
+    horizontal_front = append_images(front, direction='horizontal')
+    horizontal_back = append_images(back, direction='horizontal')
+
+    final_front = append_images([horizontal_front,horizontal_front], direction='vertical')
+    final_back = append_images([horizontal_back,horizontal_back], direction='vertical')
+
+    st.title('Final layout frontpage')
+    st.image(final_front)
+    st.title('Final layout backpage')
+    st.image(final_back)
+
+    return final_front,final_back
 
 def main():
     st.sidebar.image(f'Cambodia_button_go-1.png')
@@ -185,14 +251,20 @@ def main():
     backpages = next(walk("Back"), (None, None, []))[2]
     backpages = [back.split('.jpg')[0] for back in backpages]
 
-    postcard_creator(
+    frontpage=postcard_creator(
         filenames=filenames,
         fonts=fonts
     )
 
-    back_page_selector(
+    backpage=back_page_selector(
         backpages=backpages
     )
+
+    create_final_layout(
+        frontpage=frontpage,
+        backpage=backpage
+    )
+
     return
 
 st.image("dreambig_logo_A_main-1.png")
