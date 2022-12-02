@@ -43,7 +43,7 @@ def postcard_creator(filenames:list,fonts:list):
     image_name = st.sidebar.selectbox(
         label = "Select your image",
         options = filenames,
-        index = 1
+        index = 4
     )
     image = Image.open(f'Draws/{image_name}.jpg')
     im = image.resize(DRAW_TUPLE)
@@ -75,7 +75,7 @@ def postcard_creator(filenames:list,fonts:list):
     title_font_name = st.sidebar.selectbox(
         label = "Select title font",
         options = fonts,
-        index = 16
+        index = 7
     )
     # Font for first image
     title_font = ImageFont.truetype(f'Fonts/{title_font_name}', 27)
@@ -106,7 +106,7 @@ def postcard_creator(filenames:list,fonts:list):
     subtitle_font_name = st.sidebar.selectbox(
         label = "Select subtitle font",
         options = fonts,
-        index = 23
+        index = 24
     )
 
     # Subtitle font
