@@ -1,4 +1,4 @@
-from os import walk
+from os import walk, getcwd
 from PIL import ImageOps, Image, ImageFont, ImageDraw
 from pathlib import Path
 
@@ -172,8 +172,8 @@ def back_page_selector(backpages:list):
     return
 
 def main():
-    
-    st.sidebar.image("~/Logo/Cambodia_button_go-1.png")
+    st.write(f'{getcwd()}/Logo/Cambodia_button_go-1.png')
+    st.sidebar.image(f'{getcwd()}/Logo/Cambodia_button_go-1.png')
     st.sidebar.title("Description")
     st.sidebar.write("On this sidebar you can edit each postcard looks by changing it's different componets")
         
