@@ -1,9 +1,7 @@
-from datetime import date, datetime
 from os import walk
 from PIL import ImageOps, Image, ImageFont, ImageDraw
 from pathlib import Path
 
-import pandas as pd
 import streamlit as st
 
 st.set_page_config(page_icon="✌️", page_title="Postcard editor")
