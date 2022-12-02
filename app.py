@@ -172,8 +172,7 @@ def back_page_selector(backpages:list):
     return
 
 def main():
-    st.write(f'{getcwd()}/Logo/Cambodia_button_go-1.png')
-    st.sidebar.image(f'{getcwd()}/Logo/Cambodia_button_go-1.png')
+    st.sidebar.image(f'Cambodia_button_go-1.png')
     st.sidebar.title("Description")
     st.sidebar.write("On this sidebar you can edit each postcard looks by changing it's different componets")
         
@@ -196,7 +195,7 @@ def main():
     )
     return
 
-st.image("Logo\dreambig_logo_A_main-1.png")
+st.image("dreambig_logo_A_main-1.png")
 st.write(
     "bla bla bla bla explain the project here..............."
 )
