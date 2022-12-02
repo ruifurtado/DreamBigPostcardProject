@@ -1,6 +1,7 @@
 from datetime import date, datetime
 from os import walk
 from PIL import ImageOps, Image, ImageFont, ImageDraw
+from pathlib import Path
 
 import pandas as pd
 import streamlit as st
@@ -174,7 +175,7 @@ def back_page_selector(backpages:list):
 
 def main():
     
-    st.sidebar.image("Logo/Cambodia_button_go-1.png")
+    st.sidebar.image("~/Logo/Cambodia_button_go-1.png")
     st.sidebar.title("Description")
     st.sidebar.write("On this sidebar you can edit each postcard looks by changing it's different componets")
         
