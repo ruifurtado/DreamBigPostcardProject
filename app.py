@@ -76,7 +76,7 @@ def append_images(images, direction='horizontal',
 
     return new_im
 
-def postcard_creator(filenames:list,fonts:list):
+def postcard_creator():
     """
     Postcard front page creator
     """
@@ -84,15 +84,23 @@ def postcard_creator(filenames:list,fonts:list):
     # Title
     st.title("Front page")
 
-    # Front page
+    # Sidebar title
     st.sidebar.title('Front page')
+
+    # Upload frontpage file
+    file = st.sidebar.file_uploader(
+        label="Upload frontpage image",
+        type = ['png', 'jpg','jpeg']
+    )
 
     # Select desired image
     image_name = st.sidebar.selectbox(
         label = "Select your image",
-        options = filenames,
+        options = files_in_folder('Draws','.jpg'),
         index = 13
     )
+
+    # Get image and resize for A4/4 size
     image = Image.open(f'Draws/{image_name}.jpg')
     im = image.resize(DRAW_TUPLE)
 
@@ -102,31 +110,29 @@ def postcard_creator(filenames:list,fonts:list):
         options = zoom_map.keys(),
         index=0
     )
-
     zoom = zoom_map[zoom]
     im = im.crop((((im.size[0]/2)-im.size[0]/(zoom*2)),((im.size[1]/2)-im.size[1]/(zoom*2)),((im.size[0]/2)+im.size[0]/(zoom*2)),((im.size[1]/2)+im.size[1]/(zoom*2))))
     im = im.resize(DRAW_TUPLE)
 
-    # Select desired layout color 
+    # Select desired margin color 
     margin_color = st.sidebar.color_picker(
         label = "Select margin color",
         value = '#ffffff' 
     )
 
+    # margin plus selected image
     frontpage = Image.new('RGB', LAYOUT_TUPLE, margin_color)
     box = tuple((n - o) // 2 for n, o in zip(LAYOUT_TUPLE,DRAW_TUPLE))
     frontpage.paste(im, box)
-    
-    image_draw = ImageDraw.Draw(frontpage)
 
     # Select title font
     title_font_name = st.sidebar.selectbox(
         label = "Select title font",
-        options = fonts,
+        options = files_in_folder('Fonts','.ttf'),
         index = 7
     )
     # Font for first image
-    title_font = ImageFont.truetype(f'Fonts/{title_font_name}', 27)
+    title_font = ImageFont.truetype(f'Fonts/{title_font_name}.ttf', 27)
 
     #Select title text
     title_text = st.sidebar.text_input(
@@ -139,7 +145,9 @@ def postcard_creator(filenames:list,fonts:list):
         label = "Select title color",
         value = '#DBC759' 
     )
-
+    
+    # Write text on image
+    image_draw = ImageDraw.Draw(frontpage)
     title_loc = DOWN_CENTER_TITLE
     image_draw.text(
         title_loc, 
@@ -153,12 +161,12 @@ def postcard_creator(filenames:list,fonts:list):
     # Subtitle font name
     subtitle_font_name = st.sidebar.selectbox(
         label = "Select subtitle font",
-        options = fonts,
+        options = files_in_folder('Fonts','.ttf'),
         index = 24
     )
 
     # Subtitle font
-    subtitle_font = ImageFont.truetype(f'Fonts/{subtitle_font_name}', 18)
+    subtitle_font = ImageFont.truetype(f'Fonts/{subtitle_font_name}.ttf', 18)
 
     #Select subtitle text
     subtitle_text = st.sidebar.text_input(
@@ -172,6 +180,7 @@ def postcard_creator(filenames:list,fonts:list):
         value = '#000000' 
     )
 
+    # Write subtitle
     subtitle_loc = DOWN_CENTER_SUBTITLE
     image_draw.text(
         subtitle_loc, 
@@ -181,9 +190,9 @@ def postcard_creator(filenames:list,fonts:list):
         align='center', 
         anchor="mm"
     )
-    
-    st.sidebar.write("Filters")
 
+    # Add image filters on the sidebar
+    st.sidebar.write("Filters")
     if st.sidebar.checkbox(label="invert colors"):
         frontpage_invert = ImageOps.invert(frontpage)
         frontpage = frontpage_invert
@@ -206,6 +215,12 @@ def back_page_selector(backpages:list):
     # Title on sidebar
     st.sidebar.title("Back Page")
     
+    # Upload backpage file
+    file = st.sidebar.file_uploader(
+        label="Upload backpage image",
+        type = ['png', 'jpg','jpeg']
+    )
+
     # Select back page image
     backpage_name = st.sidebar.selectbox(
         label = "select backpage layout",
@@ -256,33 +271,54 @@ def create_final_layout(frontpage,backpage):
 
     return final_front,final_back
 
+def files_in_folder(folder:str,extension:str):
+    """
+    Returns list of draws available inside draws folder
+    """
+    # List of draws 
+    filenames = next(walk(folder), (None, None, []))[2]  # [] if no file
+
+    # Remove extension
+    filenames = [filename.split(extension)[0] for filename in filenames]
+
+    return filenames
+
 def main():
+    """
+    Main funtion used to initalize the dashboard
+    """
+
+    # Dreambig logo
     st.image(f'Logo/dreambig_logo_A_main-1.png')
+    
+    # Small description of the project
     st.write(
         "bla bla bla bla explain the project here..............."
     )
+    # Cambodia country img on the sidebar
     st.sidebar.image(f'Logo/Cambodia_button_go-1.png')
+
+    # Description of sidebar usage
     st.sidebar.title("Description")
     st.sidebar.write("On this sidebar you can edit each postcard looks by changing it's different componets")
-        
-    filenames = next(walk("Draws"), (None, None, []))[2]  # [] if no file
-    filenames = [filename.split('.jpg')[0] for filename in filenames]
 
+    # List of fonts
     fonts = next(walk("Fonts"), (None, None, []))[2]  # [] if no file
     fonts = [font.split('.jpg')[0] for font in fonts]
 
+    # List of backpage images
     backpages = next(walk("Back"), (None, None, []))[2]
     backpages = [back.split('.jpg')[0] for back in backpages]
 
-    frontpage=postcard_creator(
-        filenames=filenames,
-        fonts=fonts
-    )
+    # create frontpage postcard img
+    frontpage=postcard_creator()
 
+    # create backpage postcard img
     backpage=back_page_selector(
         backpages=backpages
     )
 
+    # create final layouts
     create_final_layout(
         frontpage=frontpage,
         backpage=backpage
