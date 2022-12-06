@@ -231,8 +231,8 @@ def create_final_layout(frontpage,backpage):
     final_back = append_images([horizontal_back,horizontal_back], direction='vertical')
 
     buf = BytesIO()
-    frontpage.save(buf, format="JPEG")
-    backpage.save(buf, format="JPEG")
+    final_front.save(buf, format="JPEG")
+    final_back.save(buf, format="JPEG")
     byte_frontpage = buf.getvalue()
     byte_backpage = buf.getvalue()
 
@@ -248,11 +248,11 @@ def create_final_layout(frontpage,backpage):
     st.title('Final layout backpage')
     st.image(final_back)
     st.download_button(
-            label = "Download frontpage",
-            data = byte_frontpage,
-            file_name = "backpage.png",
-            mime="image/jpeg"
-        )
+        label = "Download frontpage",
+        data = byte_backpage,
+        file_name = "backpage.png",
+        mime="image/jpeg"
+    )
 
     return final_front,final_back
 
