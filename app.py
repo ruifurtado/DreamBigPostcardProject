@@ -1,6 +1,6 @@
-from os import walk, getcwd
+from os import walk
 from PIL import ImageOps, Image, ImageFont, ImageDraw
-from pathlib import Path
+from io import BytesIO
 
 import streamlit as st
 
@@ -108,16 +108,16 @@ def postcard_creator(filenames:list,fonts:list):
     im = im.resize(DRAW_TUPLE)
 
     # Select desired layout color 
-    layout_color = st.sidebar.color_picker(
+    margin_color = st.sidebar.color_picker(
         label = "Select margin color",
         value = '#ffffff' 
     )
 
-    layout = Image.new('RGB', LAYOUT_TUPLE, layout_color)
+    frontpage = Image.new('RGB', LAYOUT_TUPLE, margin_color)
     box = tuple((n - o) // 2 for n, o in zip(LAYOUT_TUPLE,DRAW_TUPLE))
-    layout.paste(im, box)
+    frontpage.paste(im, box)
     
-    image_draw = ImageDraw.Draw(layout)
+    image_draw = ImageDraw.Draw(frontpage)
 
     # Select title font
     title_font_name = st.sidebar.selectbox(
@@ -185,15 +185,15 @@ def postcard_creator(filenames:list,fonts:list):
     st.sidebar.write("Filters")
 
     if st.sidebar.checkbox(label="invert colors"):
-        layout_invert = ImageOps.invert(layout)
-        layout = layout_invert
+        frontpage_invert = ImageOps.invert(frontpage)
+        frontpage = frontpage_invert
     
     if st.sidebar.checkbox(label="solarize"):
-        layout_solar = ImageOps.solarize(layout)
-        layout = layout_solar
+        frontpage_solar = ImageOps.solarize(frontpage)
+        frontpage = frontpage_solar
     
-    st.image(layout)
-    return layout
+    st.image(frontpage)
+    return frontpage
 
 def back_page_selector(backpages:list):
     """
@@ -230,15 +230,38 @@ def create_final_layout(frontpage,backpage):
     final_front = append_images([horizontal_front,horizontal_front], direction='vertical')
     final_back = append_images([horizontal_back,horizontal_back], direction='vertical')
 
+    buf = BytesIO()
+    frontpage.save(buf, format="JPEG")
+    backpage.save(buf, format="JPEG")
+    byte_frontpage = buf.getvalue()
+    byte_backpage = buf.getvalue()
+
     st.title('Final layout frontpage')
     st.image(final_front)
+    st.download_button(
+        label = "Download frontpage",
+        data = byte_frontpage,
+        file_name = "frontpage.png",
+        mime="image/jpeg"
+    )
+    
     st.title('Final layout backpage')
     st.image(final_back)
+    st.download_button(
+            label = "Download frontpage",
+            data = byte_frontpage,
+            file_name = "backpage.png",
+            mime="image/jpeg"
+        )
 
     return final_front,final_back
 
 def main():
-    st.sidebar.image(f'Cambodia_button_go-1.png')
+    st.image(f'Logo/dreambig_logo_A_main-1.png')
+    st.write(
+        "bla bla bla bla explain the project here..............."
+    )
+    st.sidebar.image(f'Logo/Cambodia_button_go-1.png')
     st.sidebar.title("Description")
     st.sidebar.write("On this sidebar you can edit each postcard looks by changing it's different componets")
         
@@ -266,12 +289,5 @@ def main():
     )
 
     return
-
-st.image("dreambig_logo_A_main-1.png")
-st.write(
-    "bla bla bla bla explain the project here..............."
-)
-
-
 
 main()
