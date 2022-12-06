@@ -248,7 +248,7 @@ def create_final_layout(frontpage,backpage):
     st.title('Final layout backpage')
     st.image(final_back)
     st.download_button(
-        label = "Download frontpage",
+        label = "Download backpage",
         data = byte_backpage,
         file_name = "backpage.png",
         mime="image/jpeg"
