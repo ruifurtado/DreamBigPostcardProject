@@ -99,7 +99,7 @@ def postcard_creator():
     image_name = st.sidebar.selectbox(
         label = "Select your image",
         options = files_in_folder('Draws'),
-        index = 18
+        index = 17
     )
 
     # Get image and resize for A4/4 size
@@ -164,7 +164,7 @@ def postcard_creator():
     subtitle_font_name = st.sidebar.selectbox(
         label = "Select subtitle font",
         options = files_in_folder('Fonts'),
-        index = 24
+        index = 18
     )
 
     # Subtitle font
