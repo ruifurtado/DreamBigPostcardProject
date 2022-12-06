@@ -2,6 +2,7 @@ from os import walk
 from PIL import ImageOps, Image, ImageFont, ImageDraw
 from io import BytesIO
 
+import os
 import streamlit as st
 
 st.set_page_config(page_icon="✌️", page_title="Postcard editor")
@@ -92,16 +93,17 @@ def postcard_creator():
         label="Upload frontpage image",
         type = ['png', 'jpg','jpeg']
     )
+    if file: save_in_folder('Draws',file)
 
     # Select desired image
     image_name = st.sidebar.selectbox(
         label = "Select your image",
-        options = files_in_folder('Draws','.jpg'),
+        options = files_in_folder('Draws'),
         index = 13
     )
 
     # Get image and resize for A4/4 size
-    image = Image.open(f'Draws/{image_name}.jpg')
+    image = Image.open(f'Draws/{image_name}')
     im = image.resize(DRAW_TUPLE)
 
     # Zoom in the image
@@ -128,11 +130,11 @@ def postcard_creator():
     # Select title font
     title_font_name = st.sidebar.selectbox(
         label = "Select title font",
-        options = files_in_folder('Fonts','.ttf'),
+        options = files_in_folder('Fonts'),
         index = 7
     )
     # Font for first image
-    title_font = ImageFont.truetype(f'Fonts/{title_font_name}.ttf', 27)
+    title_font = ImageFont.truetype(f'Fonts/{title_font_name}', 27)
 
     #Select title text
     title_text = st.sidebar.text_input(
@@ -161,12 +163,12 @@ def postcard_creator():
     # Subtitle font name
     subtitle_font_name = st.sidebar.selectbox(
         label = "Select subtitle font",
-        options = files_in_folder('Fonts','.ttf'),
+        options = files_in_folder('Fonts'),
         index = 24
     )
 
     # Subtitle font
-    subtitle_font = ImageFont.truetype(f'Fonts/{subtitle_font_name}.ttf', 18)
+    subtitle_font = ImageFont.truetype(f'Fonts/{subtitle_font_name}', 18)
 
     #Select subtitle text
     subtitle_text = st.sidebar.text_input(
@@ -204,7 +206,7 @@ def postcard_creator():
     st.image(frontpage)
     return frontpage
 
-def back_page_selector(backpages:list):
+def back_page_selector():
     """
     Postcard back page selector
     """
@@ -220,15 +222,16 @@ def back_page_selector(backpages:list):
         label="Upload backpage image",
         type = ['png', 'jpg','jpeg']
     )
+    if file: save_in_folder('Back',file)
 
     # Select back page image
     backpage_name = st.sidebar.selectbox(
         label = "select backpage layout",
-        options = backpages,
+        options = files_in_folder('Back'),
         index = 0
     )
 
-    backpage_img = Image.open(f'Back/{backpage_name}.jpg')
+    backpage_img = Image.open(f'Back/{backpage_name}')
     backpage = backpage_img.resize(LAYOUT_TUPLE)
 
     st.image(backpage)
@@ -271,17 +274,21 @@ def create_final_layout(frontpage,backpage):
 
     return final_front,final_back
 
-def files_in_folder(folder:str,extension:str):
+def files_in_folder(folder:str):
     """
     Returns list of draws available inside draws folder
     """
     # List of draws 
-    filenames = next(walk(folder), (None, None, []))[2]  # [] if no file
 
-    # Remove extension
-    filenames = [filename.split(extension)[0] for filename in filenames]
+    return next(walk(folder), (None, None, []))[2]  # [] if no file
+ 
 
-    return filenames
+def save_in_folder(folder:str, file):
+    """
+    Saves a file in a folder
+    """
+    with open(os.path.join(folder,file.name),"wb") as f:
+        f.write(file.getbuffer())
 
 def main():
     """
@@ -302,21 +309,12 @@ def main():
     st.sidebar.title("Description")
     st.sidebar.write("On this sidebar you can edit each postcard looks by changing it's different componets")
 
-    # List of fonts
-    fonts = next(walk("Fonts"), (None, None, []))[2]  # [] if no file
-    fonts = [font.split('.jpg')[0] for font in fonts]
-
-    # List of backpage images
-    backpages = next(walk("Back"), (None, None, []))[2]
-    backpages = [back.split('.jpg')[0] for back in backpages]
 
     # create frontpage postcard img
     frontpage=postcard_creator()
 
     # create backpage postcard img
-    backpage=back_page_selector(
-        backpages=backpages
-    )
+    backpage=back_page_selector()
 
     # create final layouts
     create_final_layout(
