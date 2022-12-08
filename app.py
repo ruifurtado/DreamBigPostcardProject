@@ -3,20 +3,32 @@ from PIL import ImageOps, Image, ImageFont, ImageDraw
 from io import BytesIO
 
 import os
+import numpy
 import streamlit as st
 
 st.set_page_config(page_icon="✌️", page_title="Postcard editor")
 
 A4_WIDTH = 3508
 A4_HEIGHT = 2480 
-MARGIN_WIDTH = 90
-MARGIN_HEIGHT = 125
+BACKGROUND_TUPLE = (int(A4_WIDTH/4), (int(A4_HEIGHT/4)))
 
-DRAW_TUPLE = (int(A4_WIDTH/4)-MARGIN_WIDTH,int(A4_HEIGHT/4)-MARGIN_HEIGHT)
-LAYOUT_TUPLE = (int(A4_WIDTH/4), (int(A4_HEIGHT/4)))
-
-DOWN_CENTER_TITLE = ((A4_WIDTH/4)/2, ((A4_HEIGHT/4)/2)+265)
-DOWN_CENTER_SUBTITLE = ((A4_WIDTH/4)/2, ((A4_HEIGHT/4)/2)+292)
+LAYOUTS = {
+    'layout 1':{
+        "DRAW_TUPLE":(int(A4_WIDTH/4)-80,int(A4_HEIGHT/4)-113), # Position of the draw
+        "BOX_CORRECTION":(0,-9), # correction from the center (the image is placed on the center of the background)
+        "TITLE":{
+            "center": ((A4_WIDTH/4)/2, ((A4_HEIGHT/4)/2)+263), # center
+            'left':(127, ((A4_HEIGHT/4)/2)+263), # left
+            "right": (750, ((A4_HEIGHT/4)/2)+263), # right
+        },
+        "SUBTITLE":{
+            "center": ((A4_WIDTH/4)/2, ((A4_HEIGHT/4)/2)+290), # center
+            'left':(97, ((A4_HEIGHT/4)/2)+290), # left
+            "right":(780, ((A4_HEIGHT/4)/2)+290), # right
+        }
+    },
+    'layout 2':{}
+}
 
 zoom_map = {
     "1 px":1,
@@ -102,9 +114,16 @@ def postcard_creator():
         index = 17
     )
 
+    # Select layout
+    layout_name = st.sidebar.selectbox(
+        label = "Select margin layout",
+        options = LAYOUTS.keys(),
+        index=0
+    )
+
     # Get image and resize for A4/4 size
     image = Image.open(f'Draws/{image_name}')
-    im = image.resize(DRAW_TUPLE)
+    im = image.resize(LAYOUTS[layout_name]['DRAW_TUPLE'])
 
     # Zoom in the image
     zoom = st.sidebar.selectbox(
@@ -114,7 +133,7 @@ def postcard_creator():
     )
     zoom = zoom_map[zoom]
     im = im.crop((((im.size[0]/2)-im.size[0]/(zoom*2)),((im.size[1]/2)-im.size[1]/(zoom*2)),((im.size[0]/2)+im.size[0]/(zoom*2)),((im.size[1]/2)+im.size[1]/(zoom*2))))
-    im = im.resize(DRAW_TUPLE)
+    im = im.resize(LAYOUTS[layout_name]['DRAW_TUPLE'])
 
     # Select desired margin color 
     margin_color = st.sidebar.color_picker(
@@ -123,8 +142,8 @@ def postcard_creator():
     )
 
     # margin plus selected image
-    frontpage = Image.new('RGB', LAYOUT_TUPLE, margin_color)
-    box = tuple((n - o) // 2 for n, o in zip(LAYOUT_TUPLE,DRAW_TUPLE))
+    frontpage = Image.new('RGB', BACKGROUND_TUPLE, margin_color)
+    box = tuple(numpy.add(tuple((n - o) // 2 for n, o in zip(BACKGROUND_TUPLE,LAYOUTS[layout_name]['DRAW_TUPLE'])),LAYOUTS[layout_name]['BOX_CORRECTION'])) # Correct image placement
     frontpage.paste(im, box)
 
     # Select title font
@@ -147,10 +166,17 @@ def postcard_creator():
         label = "Select title color",
         value = '#DBC759' 
     )
+
+    # Select title position 
+    title_pos = st.sidebar.selectbox(
+        label = "Select title position",
+        options = LAYOUTS[layout_name]['TITLE'].keys(),
+        index=0
+    )
     
     # Write text on image
     image_draw = ImageDraw.Draw(frontpage)
-    title_loc = DOWN_CENTER_TITLE
+    title_loc = LAYOUTS[layout_name]['TITLE'][title_pos]
     image_draw.text(
         title_loc, 
         title_text, 
@@ -182,8 +208,15 @@ def postcard_creator():
         value = '#000000' 
     )
 
+    # Select subtitle position 
+    title_pos = st.sidebar.selectbox(
+        label = "Select subtitle position",
+        options = LAYOUTS[layout_name]['SUBTITLE'].keys(),
+        index=0
+    )
+
     # Write subtitle
-    subtitle_loc = DOWN_CENTER_SUBTITLE
+    subtitle_loc = LAYOUTS[layout_name]['SUBTITLE'][title_pos]
     image_draw.text(
         subtitle_loc, 
         subtitle_text, 
@@ -232,7 +265,7 @@ def back_page_selector():
     )
 
     backpage_img = Image.open(f'Back/{backpage_name}')
-    backpage = backpage_img.resize(LAYOUT_TUPLE)
+    backpage = backpage_img.resize(BACKGROUND_TUPLE)
 
     st.image(backpage)
     return backpage
