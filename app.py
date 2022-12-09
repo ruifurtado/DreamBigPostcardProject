@@ -16,18 +16,24 @@ LAYOUTS = {
     'layout 1':{
         "DRAW_TUPLE":(int(A4_WIDTH/4)-80,int(A4_HEIGHT/4)-113), # Position of the draw
         "BOX_CORRECTION":(0,-9), # correction from the center (the image is placed on the center of the background)
+        "TITLE_SIZE":27,
         "TITLE":{
             "center": ((A4_WIDTH/4)/2, ((A4_HEIGHT/4)/2)+263), # center
             'left':(127, ((A4_HEIGHT/4)/2)+263), # left
             "right": (750, ((A4_HEIGHT/4)/2)+263), # right
         },
+        "SUBTITLE_SIZE":20,
         "SUBTITLE":{
             "center": ((A4_WIDTH/4)/2, ((A4_HEIGHT/4)/2)+290), # center
             'left':(97, ((A4_HEIGHT/4)/2)+290), # left
             "right":(780, ((A4_HEIGHT/4)/2)+290), # right
         }
     },
-    'layout 2':{}
+    'layout 2':{
+        "DRAW_TUPLE":(int(A4_WIDTH/4)-105,int(A4_HEIGHT/4)-90), # Position of the draw
+        "BOX_CORRECTION":(0,-9), # correction from the center (the image is placed on the center of the background)
+        "TITLE_SIZE":31,
+    }
 }
 
 zoom_map = {
@@ -153,7 +159,7 @@ def postcard_creator():
         index = 7
     )
     # Font for first image
-    title_font = ImageFont.truetype(f'Fonts/{title_font_name}', 27)
+    title_font = ImageFont.truetype(f'Fonts/{title_font_name}', LAYOUTS[layout_name]['TITLE_SIZE'])
 
     #Select title text
     title_text = st.sidebar.text_input(
@@ -167,64 +173,75 @@ def postcard_creator():
         value = '#DBC759' 
     )
 
-    # Select title position 
-    title_pos = st.sidebar.selectbox(
-        label = "Select title position",
-        options = LAYOUTS[layout_name]['TITLE'].keys(),
-        index=0
-    )
-    
-    # Write text on image
-    image_draw = ImageDraw.Draw(frontpage)
-    title_loc = LAYOUTS[layout_name]['TITLE'][title_pos]
-    image_draw.text(
-        title_loc, 
-        title_text, 
-        font=title_font, 
-        fill=title_color, 
-        align='center', 
-        anchor="mm"
-    )
+    # Check layout here because options may vary according to layout
+    # If layout 2 we need to create new image to paste
+    if layout_name in ['layout 2']:
+        image = Image.new('RGB', (300, 45), color=margin_color)
+        draw = ImageDraw.Draw(image)
+        draw.text((45, 1), title_text, fill=title_color, font=title_font)
+        image = image.transpose(Image.Transpose.ROTATE_90)
+        frontpage.paste(image,box=(830,int(LAYOUTS[layout_name]['DRAW_TUPLE'][1]/2)-120)) # Write text on image
 
-    # Subtitle font name
-    subtitle_font_name = st.sidebar.selectbox(
-        label = "Select subtitle font",
-        options = files_in_folder('Fonts'),
-        index = 18
-    )
 
-    # Subtitle font
-    subtitle_font = ImageFont.truetype(f'Fonts/{subtitle_font_name}', 20)
+    # Select title position
+    if layout_name in ['layout 1']:
+        title_pos = st.sidebar.selectbox(
+            label = "Select title position",
+            options = LAYOUTS[layout_name]['TITLE'].keys(),
+            index=0
+        )
+        
+        # Write text on image
+        image_draw = ImageDraw.Draw(frontpage)
+        title_loc = LAYOUTS[layout_name]['TITLE'][title_pos]
+        image_draw.text(
+            title_loc, 
+            title_text, 
+            font=title_font, 
+            fill=title_color, 
+            align=LAYOUTS[layout_name]['TITLE'][title_pos], 
+            anchor="mm"
+        )        
 
-    #Select subtitle text
-    subtitle_text = st.sidebar.text_input(
-        label="Select postcard subtitle",
-        value="Prasat Bakong"
-    )
+        # Subtitle font name
+        subtitle_font_name = st.sidebar.selectbox(
+            label = "Select subtitle font",
+            options = files_in_folder('Fonts'),
+            index = 18
+        )
 
-    # Select subtitle color 
-    subtitle_color = st.sidebar.color_picker(
-        label = "Select subtitle color",
-        value = '#000000' 
-    )
+        # Subtitle font
+        subtitle_font = ImageFont.truetype(f'Fonts/{subtitle_font_name}', LAYOUTS[layout_name]['SUBTITLE_SIZE'])
 
-    # Select subtitle position 
-    title_pos = st.sidebar.selectbox(
-        label = "Select subtitle position",
-        options = LAYOUTS[layout_name]['SUBTITLE'].keys(),
-        index=0
-    )
+        #Select subtitle text
+        subtitle_text = st.sidebar.text_input(
+            label="Select postcard subtitle",
+            value="Prasat Bakong"
+        )
 
-    # Write subtitle
-    subtitle_loc = LAYOUTS[layout_name]['SUBTITLE'][title_pos]
-    image_draw.text(
-        subtitle_loc, 
-        subtitle_text, 
-        font=subtitle_font, 
-        fill=subtitle_color, 
-        align='center', 
-        anchor="mm"
-    )
+        # Select subtitle color 
+        subtitle_color = st.sidebar.color_picker(
+            label = "Select subtitle color",
+            value = '#000000' 
+        )
+
+        # Select subtitle position 
+        title_pos = st.sidebar.selectbox(
+            label = "Select subtitle position",
+            options = LAYOUTS[layout_name]['SUBTITLE'].keys(),
+            index=0
+        )
+
+        # Write subtitle
+        subtitle_loc = LAYOUTS[layout_name]['SUBTITLE'][title_pos]
+        image_draw.text(
+            subtitle_loc, 
+            subtitle_text, 
+            font=subtitle_font, 
+            fill=subtitle_color, 
+            align='center', 
+            anchor="mm"
+        )
 
     # Add image filters on the sidebar
     st.sidebar.write("Filters")
