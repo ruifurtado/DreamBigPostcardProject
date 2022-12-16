@@ -30,9 +30,11 @@ LAYOUTS = {
         }
     },
     'layout 2':{
-        "DRAW_TUPLE":(int(A4_WIDTH/4)-105,int(A4_HEIGHT/4)-90), # Position of the draw
+        "DRAW_TUPLE":(int(A4_WIDTH/4)-105,int(A4_HEIGHT/4)-80), # Position of the draw
         "BOX_CORRECTION":(0,-9), # correction from the center (the image is placed on the center of the background)
         "TITLE_SIZE":31,
+        "SUBTITLE1_SIZE":18,
+        "SUBTITLE2_SIZE":18
     }
 }
 
@@ -182,6 +184,52 @@ def postcard_creator():
         image = image.transpose(Image.Transpose.ROTATE_90)
         frontpage.paste(image,box=(830,int(LAYOUTS[layout_name]['DRAW_TUPLE'][1]/2)-120)) # Write text on image
 
+        # Subtitle font name
+        subtitle1_font_name = st.sidebar.selectbox(
+            label = "Select subtitle1 font",
+            options = files_in_folder('Fonts'),
+            index = 18
+        )
+        
+        # Font for subtitle1
+        subtitle1_font = ImageFont.truetype(f'Fonts/{subtitle1_font_name}', LAYOUTS[layout_name]['SUBTITLE1_SIZE'])
+
+        #Select title text
+        subtitle1_text = st.sidebar.text_input(
+            label="Select subtitle1 text",
+            value="www.wedreambig.com"
+        )
+
+        # Select title color 
+        subtitle1_color = st.sidebar.color_picker(
+            label = "Select subtitle1 color",
+            value = '#DBC759' 
+        )
+        draw2 = ImageDraw.Draw(frontpage)
+        draw2.text((728,590), subtitle1_text, fill=subtitle1_color, font=subtitle1_font,anchor="mm")
+
+        # Subtitle font name
+        subtitle2_font_name = st.sidebar.selectbox(
+            label = "Select subtitle2 font",
+            options = files_in_folder('Fonts'),
+            index = 18
+        )
+
+        # Font for subtitle1
+        subtitle2_font = ImageFont.truetype(f'Fonts/{subtitle2_font_name}', LAYOUTS[layout_name]['SUBTITLE1_SIZE'])
+
+        #Select title text
+        subtitle2_text = st.sidebar.text_input(
+            label="Select postcard title",
+            value="Dream Big Cambodia"
+        )
+
+        # Select title color 
+        subtitle2_color = st.sidebar.color_picker(
+            label = "Select title color",
+            value = '#000000' 
+        )
+        draw2.text((135,590), subtitle2_text, fill=subtitle2_color, font=subtitle2_font,anchor="mm")
 
     # Select title position
     if layout_name in ['layout 1']:
