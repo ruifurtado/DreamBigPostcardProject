@@ -30,7 +30,7 @@ LAYOUTS = {
         }
     },
     'layout 2':{
-        "DRAW_TUPLE":(int(A4_WIDTH/4)-105,int(A4_HEIGHT/4)-80), # Position of the draw
+        "DRAW_TUPLE":(int(A4_WIDTH/4)-105,int(A4_HEIGHT/4)-65), # Position of the draw
         "BOX_CORRECTION":(0,-9), # correction from the center (the image is placed on the center of the background)
         "TITLE_SIZE":31,
         "SUBTITLE1_SIZE":18,
@@ -206,7 +206,7 @@ def postcard_creator():
             value = '#DBC759' 
         )
         draw2 = ImageDraw.Draw(frontpage)
-        draw2.text((728,590), subtitle1_text, fill=subtitle1_color, font=subtitle1_font,anchor="mm")
+        draw2.text((728,595), subtitle1_text, fill=subtitle1_color, font=subtitle1_font,anchor="mm")
 
         # Subtitle font name
         subtitle2_font_name = st.sidebar.selectbox(
@@ -229,7 +229,7 @@ def postcard_creator():
             label = "Select title color",
             value = '#000000' 
         )
-        draw2.text((135,590), subtitle2_text, fill=subtitle2_color, font=subtitle2_font,anchor="mm")
+        draw2.text((135,595), subtitle2_text, fill=subtitle2_color, font=subtitle2_font,anchor="mm")
 
     # Select title position
     if layout_name in ['layout 1']:
