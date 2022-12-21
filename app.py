@@ -119,7 +119,7 @@ def postcard_creator():
     image_name = st.sidebar.selectbox(
         label = "Select your image",
         options = files_in_folder('Draws'),
-        index = 17
+        index = 0
     )
 
     # Select layout
