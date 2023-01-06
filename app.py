@@ -105,6 +105,11 @@ def postcard_creator():
     # Title
     st.title("Front page")
 
+    # Description
+    st.markdown(
+        "- ##### Here you can visualize how the layout changes affect the postcard's frontpage"  
+    )
+
     # Sidebar title
     st.sidebar.title('Front page')
 
@@ -302,6 +307,15 @@ def postcard_creator():
         frontpage = frontpage_solar
     
     st.image(frontpage)
+    buf = BytesIO()
+    frontpage.save(buf, format="JPEG")
+    byte_frontpage = buf.getvalue()
+    st.download_button(
+        label = "Download frontpage",
+        data = byte_frontpage,
+        file_name = "frontpage.png",
+        mime="image/jpeg"
+    )
     return frontpage
 
 def back_page_selector():
@@ -311,6 +325,11 @@ def back_page_selector():
     
     # Title 
     st.title('Back Page')
+
+    # Description
+    st.markdown(
+        "- ##### Here you can visualize how the layout changes affect the postcard's backpage" 
+    )
 
     # Title on sidebar
     st.sidebar.title("Back Page")
@@ -333,6 +352,16 @@ def back_page_selector():
     backpage = backpage_img.resize(BACKGROUND_TUPLE)
 
     st.image(backpage)
+    buf = BytesIO()
+    backpage.save(buf, format="JPEG")
+    byte_backpage = buf.getvalue()
+    st.download_button(
+        label = "Download backpage",
+        data = byte_backpage,
+        file_name = "backpage_A4.png",
+        mime="image/jpeg"
+    )
+
     return backpage
 
 def create_final_layout(frontpage,backpage):
@@ -352,21 +381,33 @@ def create_final_layout(frontpage,backpage):
     byte_frontpage = buf.getvalue()
     byte_backpage = buf.getvalue()
 
+    # title
     st.title('Final layout frontpage')
+    # description
+    st.markdown(
+        "- ##### Here you can visualize and download the frontpage layout spread by an A4 page"  
+    )
     st.image(final_front)
+    # download
     st.download_button(
-        label = "Download frontpage",
+        label = "Download frontpage A4",
         data = byte_frontpage,
-        file_name = "frontpage.png",
+        file_name = "frontpage_A4.png",
         mime="image/jpeg"
     )
     
+    # title
     st.title('Final layout backpage')
+    # description
+    st.markdown(
+        "- ##### Here you can visualize and download the backpage layout spread by an A4 page"  
+    )
     st.image(final_back)
+    # download
     st.download_button(
-        label = "Download backpage",
+        label = "Download backpage A4",
         data = byte_backpage,
-        file_name = "backpage.png",
+        file_name = "backpage_A4.png",
         mime="image/jpeg"
     )
 
@@ -397,9 +438,13 @@ def main():
     st.image(f'Logo/dreambig_logo_A_main-1.png')
     
     # Small description of the project
-    st.write(
-        "bla bla bla bla explain the project here..............."
+    st.markdown(
+        "- ##### This project is an initiative created by some volunteers in order to provide to Cristina School an alternative source of revenue besides tradional donantions"
     )
+    st.markdown(
+        "- ##### With this webpage we intend to create a simple way for new volunteers to create new postcard layouts and customize the old ones as desired" 
+    )
+
     # Cambodia country img on the sidebar
     st.sidebar.image(f'Logo/Cambodia_button_go-1.png')
 
