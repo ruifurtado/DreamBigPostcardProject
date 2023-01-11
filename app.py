@@ -438,12 +438,57 @@ def main():
     st.image(f'Logo/dreambig_logo_A_main-1.png')
     
     # Small description of the project
-    st.markdown(
-        "- ##### This project is an initiative created by some volunteers in order to provide to Cristina School an alternative source of revenue besides tradional donantions"
+    # st.markdown(
+    #     "- ##### This project is an initiative created by some volunteers in order to provide to Cristina School an alternative source of revenue besides tradional donantions"
+    # )
+    # st.markdown(
+    #     "- ##### With this webpage we intend to create a simple way for new volunteers to create new postcard layouts and customize the old ones as desired" 
+    # )
+    st.text("")
+    st.text("")
+    st.text("")
+    st.text("")
+
+    # Video of dreambig
+    # video_file = open('Video/DreamBig.mp4', 'rb')
+    # video_bytes = video_file.read()
+    # width = max(55, 0.01)
+    # side = max((100 - width) / 2, 0.01)
+    # _ , _, container = st.columns([side, width, side])
+    # container.video(data=video_bytes)
+
+    # Video of dreambig
+    video_file = open('Video/DreamBig.mp4', 'rb')
+    video_bytes = video_file.read()
+    text_container, video_container = st.columns(2)
+    text_container.markdown(
+        "___________"\
     )
-    st.markdown(
-        "- ##### With this webpage we intend to create a simple way for new volunteers to create new postcard layouts and customize the old ones as desired" 
+    text_container.text(" ")
+    text_container.text(" ")
+    text_container.text(" ")
+    text_container.text(" ")
+    text_container.markdown(
+        "- ##### This project is an initiative created by some volunteers in order to provide to Cristina School an alternative source of revenue besides tradional donantions \n"\
     )
+    text_container.text(" ")
+    text_container.text(" ")
+    text_container.text(" ")
+    text_container.markdown(
+        "- ##### With this webpage we intend to create a simple way for new volunteers to create new postcard layouts and customize the old ones as desired \n" \
+    )
+    text_container.text(" ")
+    text_container.text(" ")
+    text_container.text(" ")
+    text_container.markdown("______")
+
+    video_container.video(data=video_bytes)
+    
+    # width = max(55, 0.01)
+    # side = max((100 - width) / 2, 0.01)
+    # _ , _, container = st.columns([side, width, side])
+    # container.video(data=video_bytes)
+    
 
     # Cambodia country img on the sidebar
     st.sidebar.image(f'Logo/Cambodia_button_go-1.png')
