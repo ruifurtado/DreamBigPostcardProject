@@ -458,7 +458,7 @@ def main():
     # container.video(data=video_bytes)
 
     # Video of dreambig
-    video_file = open('Video/DreamBig2.mp4', 'rb')
+    video_file = open(f'Video/DreamBig2.mp4', 'rb')
     video_bytes = video_file.read()
     text_container, video_container = st.columns(2)
     text_container.markdown(
