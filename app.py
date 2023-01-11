@@ -448,50 +448,10 @@ def main():
     st.markdown(
         "- ##### With this webpage we intend to create a simple way for new volunteers to create new postcard layouts and customize the old ones as desired" 
     )
-    
-    # Video of dreambig
-    video_file = open('DreamBig2.mp4', 'rb')
-    video_bytes = video_file.read()
-    width = max(55, 0.01)
-    side = max((100 - width) / 2, 0.01)
-    _ ,container,_  = st.columns([side, width, side])
-    container.video(data=video_bytes)
 
     # Video of dreambig
-    # st.video("https://youtu.be/lumlWOw8sE4")
-    # url = 'https://youtu.be/lumlWOw8sE4'
-    # video_file = open(url.strip())
-    # video_bytes = video_file.read()
-    # text_container, video_container = st.columns(2)
-    # text_container.markdown(
-    #     "___________"\
-    # )
-    # text_container.text(" ")
-    # text_container.text(" ")
-    # text_container.text(" ")
-    # text_container.text(" ")
-    # text_container.markdown(
-    #     "- ##### This project is an initiative created by some volunteers in order to provide to Cristina School an alternative source of revenue besides tradional donantions \n"\
-    # )
-    # text_container.text(" ")
-    # text_container.text(" ")
-    # text_container.text(" ")
-    # text_container.markdown(
-    #     "- ##### With this webpage we intend to create a simple way for new volunteers to create new postcard layouts and customize the old ones as desired \n" \
-    # )
-    # text_container.text(" ")
-    # text_container.text(" ")
-    # text_container.text(" ")
-    # text_container.markdown("______")
-
-    # video_container= st.video(data=video_bytes)
+    st.video("https://youtu.be/lumlWOw8sE4")
     
-    # width = max(55, 0.01)
-    # side = max((100 - width) / 2, 0.01)
-    # _ , _, container = st.columns([side, width, side])
-    # container.video(data=video_bytes)
-    
-
     # Cambodia country img on the sidebar
     st.sidebar.image(f'Logo/Cambodia_button_go-1.png')
 
